@@ -1,35 +1,66 @@
+import munpy as np
+import gym
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch as T
 
-class LinearClassifier(nn.Module):
-    def __init__(self, lr, n_classes, input_dims):
-        super(LinearClassifier).__init__()
+class LinearDeepQNetwork(nn.Module):
+    def __init__(self, lr, n_actions, input_dims):
+        super(LinearDeepQNetwork).__init__()
 
         self.fc1 = nn.Linear(*input_dims, 128)
-        self.fc2 = nn.Linear(128, 256)
-        self.fc3 = nn.Linear(256, n_classes)
+        self.fc2 = nn.Linear(128, n_actions)
 
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
-        self.loss = nn.CrossEntropyLoss()
+        self.loss = nn.MSELoss()
         self.device = T.device("cuda:0" if T.cuda.is_available() else "cpu")
         self.to(self.device)
 
-    def forward(self, data):
-        layer1 = F.sigmoid(self.fc1(data))
-        layer2 = F.sigmoid(self.fc1(layer1))
-        layer3 = self.fc3(layer2)
-        return layer3
+    def forward(self, state):
+        layer1 = F.relu(self.fc1(state))
+        actions = self.fc2(layer1)
+        return actions
 
-    def learn(self, data, labels):
-        self.optimizer.zero_grad()
-        data = T.tensor(data.to(self.device))
-        labels = T.tensor(labels.to(self.device))
+class Agent():
+    def __init__(self, input_dims, n_actions, lr, gamma=0.99, epsilon=1.0, eps_dec=1e-5, eps_min=0.01):
+        self.input_dims = input_dims
+        self.n_actions = n_actions
+        self.lr = lr
+        self.gamma = gamma
+        self.epsilon = eps_start
+        self.eps_min = eps_end
+        self.eps_dec = eps_dec
+        self.action_space = [i for i in  range(self.n_actions)]
 
-        predictions = self.forward(data)
+        self.Q = LinearDeepQNetwork(self.lr, self.n_actions, self.input_dims)
 
-        cost = self.loss(predictions, labels)
+    def choose_action(self, obs):
+        if np.random.random() > self.epsilon:
+            state = T.tensor(obs, dtype=T.float).to(self.Q.device)
+            actions = self.Q.forward(state)
+            action = T.argmax(actions).item()
+        else:
+            action = np.random_choice(self.action_space)
+        return action
+
+    def decrement_epsilon(self):
+        self.epsilon = self.epsilon-self.eps_dec if self.epsilon > self.eps_min else self.eps_min
+
+    def learn(self, state, action, reward, new_state):
+        self.Q.optimizer.zero_grad()
+
+        stateT = T.tensor(obs, dtype=T.float).to(self.Q.device)
+        new_stateT = T.tensor(new_obs, dtype=T.float).to(self.Q.device)
+        rewardT = T.tensor(reward, dtype=T.float).to(self.Q.device)
+
+        q_value = T.max(self.Q.forward(stateT))
+        new_q_value = T.max(self.Q.forward(new_stateT))
+
+        q_target = rewardT + self.gamma*(new_q_value))
+
+        cost = self.Q.loss(q_target, q_value).to(self.Q.device)
 
         cost.backwards()
-        self.optimizer.step()
+        self.Q.optimizer.step()
+        self.decrement_epsilon()
