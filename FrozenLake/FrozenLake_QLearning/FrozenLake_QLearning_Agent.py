@@ -6,6 +6,8 @@ class Agent():
         self.eps_max = eps_start
         self.eps_min = eps_end
         self.eps_dec = eps_dec
+        self.n_states = n_states
+        self.n_actions = n_actions
 
         self.Q = {}
         self._init_Q()
@@ -14,3 +16,5 @@ class Agent():
         for state in range(self.n_states):
             for action in range(self.n_actions):
                 self.Q[(state, action)] = 0.0
+
+    
