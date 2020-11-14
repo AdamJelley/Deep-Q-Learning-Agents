@@ -68,7 +68,7 @@ class Agent():
 
 if __name__ == "__main__":
 
-    n_games = 10
+    n_games = 10000
     win_pct_list = []
     scores = []
     eps_history = []
