@@ -1,3 +1,4 @@
 .DS_Store
 deep-q-learning/
 *.pyc
+NaiveDQN/cartpole_naive_dqn_learning.png
