@@ -33,7 +33,7 @@ def RepeatActionAndMaxFrame(gym.Wrapper):
     def reset(self):
         obs = self.env.reset()
         no_ops = np.random.randint(self.no_ops)+1 if self.no_ops > 0 else 0
-        for _  in range(no_ops):
+        for _ in range(no_ops):
             _, _, done, _ = self.env.step(0)
             if done:
                 self.env.reset()
