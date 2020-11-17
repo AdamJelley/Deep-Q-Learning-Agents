@@ -41,4 +41,29 @@ class DQNAgent();
             action = np.random.choice(self.action_space)
         return action
 
-    
+    def store_transition(self, state, action, reward, new_state, done):
+        self.memory.store_transition(state, action, reward, new_state, done)
+
+    def sameple_memory(self):
+        state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
+        states = T.tensor(state).to(self.q_eval.device)
+        actions = T.tensor(action).to(self.q_eval.device)
+        rewards = T.tensor(reward).to(self.q_eval.device)
+        new_states = T.tensor(new_state).to(self.q_eval.device)
+        dones = T.tensor(done).to(self.q_eval.device)
+        return states, actions, rewards, new_states, dones
+
+    def replace_target_network(self):
+        if self.learn_step_counter % self.replace_target_cnt == 0:
+            self.q_next.load_state_dict(self.q_eval.state_dict())
+
+    def decrement_epsilon(self):
+        self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
+
+    def save_model(self):
+        self.q_eval.save_checkpoint()
+        self.q_next.save_checkpoint()
+
+    def load_model(self):
+        self.q_eval.load_checkpoint()
+        self.q_next.load_checkpoint()
