@@ -20,7 +20,7 @@ class DQNAgent();
         self.env_name = env_name
         self.checkpoint_dir = checkpoint_dir
         self.action_space = [i for i in range(n_actions)]
-        self.learn_step_counter = 0
+        self.learn_step_cntr = 0
 
         self.memory = ReplayBuffer(mem_size, input_dims, n_actions)
         
@@ -44,7 +44,7 @@ class DQNAgent();
     def store_transition(self, state, action, reward, new_state, done):
         self.memory.store_transition(state, action, reward, new_state, done)
 
-    def sameple_memory(self):
+    def sample_memory(self):
         state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
         states = T.tensor(state).to(self.q_eval.device)
         actions = T.tensor(action).to(self.q_eval.device)
@@ -67,3 +67,28 @@ class DQNAgent();
     def load_model(self):
         self.q_eval.load_checkpoint()
         self.q_next.load_checkpoint()
+
+    def learn(self):
+        if self.memory.mem_cntr < self.batch_size:
+            return
+
+        self.q_eval.optimizer.zero_grad()
+
+        self.replace_target_network()
+
+        states, actions, rewards, new_states, dones = self.sample_memory()
+
+        indices = np.arange(self.batch_size)
+        q_pred = self.q_eval.forward(states)[indices, actions] #dims = batch_size * n_actions
+        q_next = self.q_next.forward(new_states).max(dim=1)[0]
+
+        q_next[dones] = 0.0
+
+        q_target = rewards + self.gamma * q_next
+
+        loss = self.q_eval.loss(q_target, q_pred).to(self.q_eval.device)
+        loss.backward()
+        self.q_eval.optimizer.step()
+        self.learn_step_cntr += 1
+
+        self.decrement_epsilon()
