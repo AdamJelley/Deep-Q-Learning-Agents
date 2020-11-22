@@ -3,9 +3,9 @@ import torch as T
 from deep_q_network import DeepQNetwork
 from replay_memory import ReplayBuffer
 
-class DQNAgent();
-    def __init__(self, gamma, epsilon, lr, n_actions, , input_dims, mem_size, batch_size, eps_min=0.01,
-                eps_dec=5e-7, replace=1000, algo=None, env_name=None, checkpoint_dir='tmp/dqn')
+class DQNAgent():
+    def __init__(self, gamma, epsilon, lr, n_actions, input_dims, mem_size, batch_size, eps_min=0.01,
+                eps_dec=5e-7, replace=1000, algo=None, env_name=None, checkpoint_dir='tmp/dqn'):
 
         self.gamma = gamma
         self.epsilon = epsilon
@@ -54,7 +54,7 @@ class DQNAgent();
         return states, actions, rewards, new_states, dones
 
     def replace_target_network(self):
-        if self.learn_step_counter % self.replace_target_cnt == 0:
+        if self.learn_step_cntr % self.replace_target_cnt == 0:
             self.q_next.load_state_dict(self.q_eval.state_dict())
 
     def decrement_epsilon(self):
