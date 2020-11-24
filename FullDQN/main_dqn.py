@@ -54,4 +54,4 @@ if __name__ == '__main__':
 
         eps_history.append(agent.epsilon)
 
-        plot_learning_curve(steps_array, scores, eps_history, figure_file)
+    plot_learning_curve(steps_array, scores, eps_history, figure_file)
