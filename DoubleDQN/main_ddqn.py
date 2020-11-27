@@ -1,5 +1,5 @@
 import numpy as np
-from dqn_agent import DDQNAgent
+from ddqn_agent import DDQNAgent
 from utils import make_env, plot_learning_curve
 
 if __name__ == '__main__':
