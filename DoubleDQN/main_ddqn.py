@@ -11,7 +11,7 @@ if __name__ == '__main__':
                     input_dims = (env.observation_space.shape),
                     n_actions = env.action_space.n, mem_size=50000, eps_min=0.1,
                     batch_size=32, replace=1000, eps_dec=1e-5,
-                    checkpoint_dir='/Users/ajelley/Documents/DeepQLearningCourse/FullDQN/models/', 
+                    checkpoint_dir='/Users/ajelley/Documents/DeepQLearningCourse/DoubleDQN/models/', 
                     algo='DDQNAgent',
                     env_name='PongNoFrameskip-v4')
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         
     
     fname = agent.algo + '_' + agent.env_name + '_lr' + str(agent.lr) + '_' + str(n_games) + 'games'
-    figure_file = '/Users/ajelley/Documents/DeepQLearningCourse/FullDQN/plots/' + fname + '.png'
+    figure_file = '/Users/ajelley/Documents/DeepQLearningCourse/DoubleDQN/plots/' + fname + '.png'
 
     n_steps = 0
     scores, eps_history, steps_array = [], [], []

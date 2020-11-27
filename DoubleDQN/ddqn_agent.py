@@ -93,7 +93,7 @@ class DDQNAgent():
         loss = self.q_eval.loss(q_target, q_pred).to(self.q_eval.device)
         loss.backward()
 
-        self.q_eval.optimzer.step()
+        self.q_eval.optimizer.step()
 
         self.learn_step_cntr += 1
 
