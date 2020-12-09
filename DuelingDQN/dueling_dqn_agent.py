@@ -81,7 +81,7 @@ class DuelingDQNAgent():
         indices = np.arange(self.batch_size)
 
         V_s, A_s = self.q_eval.forward(states)
-        V_s_next, A_s_next = self.q_eval.forward(new_states)
+        V_s_next, A_s_next = self.q_next.forward(new_states)
 
         q_pred = T.add(V_s, (A_s - A_s.mean(dim=1, keepdim=True)))[indices, actions]
         q_next = T.add(V_s_next, (A_s_next - A_s_next.mean(dim=1, keepdim=True))).max(dim=1)[0]
