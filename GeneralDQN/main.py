@@ -1,6 +1,6 @@
 import argparse, os
 import numpy as np
-from dueling_ddqn_agent import DuelingDDQNAgent
+import agents as Agents
 from utils import make_env, plot_learning_curve
 
 if __name__ == '__main__':
@@ -37,7 +37,9 @@ if __name__ == '__main__':
     load_checkpoint = args.load_checkpoint
     n_games = args.n_games
 
-    agent = DQNAgent(gamma=args.gamma,
+    agent_ = getattr(Agents, args.algo)
+
+    agent = agent_(gamma=args.gamma,
                     epsilon=args.eps, 
                     lr=args.lr, 
                     input_dims = (env.observation_space.shape),
@@ -56,7 +58,7 @@ if __name__ == '__main__':
         
     
     fname = args.algo + '_' + args.env + '_lr' + str(args.lr) + '_' + str(args.n_games) + 'games'
-    figure_file = '/Users/ajelley/Documents/DeepQLearningCourse/DuelingDoubleDQN/plots/' + fname + '.png'
+    figure_file = '/Users/ajelley/Documents/DeepQLearningCourse/GeneralDQN/plots/' + fname + '.png'
 
     n_steps = 0
     scores, eps_history, steps_array = [], [], []
