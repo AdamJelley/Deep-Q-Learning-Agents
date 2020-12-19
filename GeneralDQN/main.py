@@ -24,14 +24,14 @@ if __name__ == '__main__':
                                                                             AtlantisNoFrameskip-v4')
     parser.add_argument('-gpu', type=str, default='0', help='GPU: 0 or 1')
     parser.add_argument('-load_checkpoint', type=bool, default=False, help='Load model checkpoint')
-    parser.add_argument('-path', type=str, default='tmp/', help='Path for model saving/loading')
+    parser.add_argument('-path', type=str, default='./models/', help='Path for model saving/loading')
     parser.add_argument('-algo', type=str, default='DQNAgent', help='DQNAgent/DDQNAgent/DuelingDQNAgent/DuelingDDQNAgent')
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    env = make_env(args.env)
+    env = make_env(env_name=args.env, repeat=args.skip)
 
     best_score = -np.inf
     load_checkpoint = args.load_checkpoint
