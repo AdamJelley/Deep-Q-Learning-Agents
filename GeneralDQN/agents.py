@@ -78,7 +78,7 @@ class DQNAgent(Agent):
             action = np.random.choice(self.action_space)
         return action
     
-     def learn(self):
+    def learn(self):
         if self.memory.mem_cntr < self.batch_size:
             return
 
@@ -176,7 +176,7 @@ class DuelingDQNAgent(Agent):
             action = np.random.choice(self.action_space)
         return action
 
-   def learn(self):
+    def learn(self):
         if self.memory.mem_cntr < self.batch_size:
             return
 
@@ -206,7 +206,7 @@ class DuelingDQNAgent(Agent):
 
         self.decrement_epsilon()
 
-class DuelingDDQNAgent(Agent:
+class DuelingDDQNAgent(Agent):
     def __init__(self, *args, **kwargs):
         super(DuelingDDQNAgent, self).__init__(*args, **kwargs)
 
