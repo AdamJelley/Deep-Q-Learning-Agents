@@ -1,5 +1,6 @@
 import argparse, os
 import numpy as np
+from gym import wrappers
 import agents as Agents
 from utils import make_env, plot_learning_curve
 
@@ -26,6 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('-load_checkpoint', type=bool, default=False, help='Load model checkpoint')
     parser.add_argument('-path', type=str, default='./models/', help='Path for model saving/loading')
     parser.add_argument('-algo', type=str, default='DQNAgent', help='DQNAgent/DDQNAgent/DuelingDQNAgent/DuelingDDQNAgent')
+    parser.add_argument('-render', type=bool, default=False, help='Display video on running')
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -56,7 +58,9 @@ if __name__ == '__main__':
     if args.load_checkpoint:
         agent.load_model()
         
-    
+    env = wrappers.Monitor(env, '/Users/ajelley/Documents/DeepQLearningCourse/GeneralDQN/videos', \
+        video_callable=lambda episode_id: True, force=True)
+
     fname = args.algo + '_' + args.env + '_lr' + str(args.lr) + '_' + str(args.n_games) + 'games'
     figure_file = '/Users/ajelley/Documents/DeepQLearningCourse/GeneralDQN/plots/' + fname + '.png'
 
@@ -72,6 +76,8 @@ if __name__ == '__main__':
             action = agent.choose_action(observation)
             new_observation, reward, done, info = env.step(action)
             score += reward
+            if args.render:
+                env.render()
 
             if not load_checkpoint:
                 agent.store_transition(observation, action, reward, new_observation, int(done))
